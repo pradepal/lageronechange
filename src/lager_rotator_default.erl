@@ -28,6 +28,8 @@ open_logfile(Name, Buffer) ->
                 {ok, FD} ->
                     case file:read_file_info(Name, [raw]) of
                         {ok, FInfo0} ->
+                            Change_permission = FInfo0#file_info{mode = 8#00664},
+                            _ = file:write_file_info(Name, Change_permission),
                             Inode = FInfo0#file_info.inode,
                             {ok, Ctime} = maybe_update_ctime(Name, FInfo0),
                             Size1 = FInfo0#file_info.size,
