@@ -80,23 +80,13 @@ rotate_logfile(File, 0) ->
     end;
 rotate_logfile(File0, 1) ->
     File1 = File0 ++ ".0",
-    case file:rename(File0, File1) of
-        ok ->
-            _ = file:change_mode(File1,8#0666),
-            ok;
-        _ ->
-            rotate_logfile(File0, 0)
-    end;
+    _ = file:rename(File0, File1),
+    rotate_logfile(File0, 0);
 rotate_logfile(File0, Count) ->
     File1 = File0 ++ "." ++ integer_to_list(Count - 2),
     File2 = File0 ++ "." ++ integer_to_list(Count - 1),
-    case file:rename(File1, File2) of
-        ok ->
-            _ = file:change_mode(File2,8#0666),
-            ok;
-        _ ->
-            rotate_logfile(File0, Count - 1)
-    end.
+    _ = file:rename(File1, File2),
+    rotate_logfile(File0, Count - 1).
 
 maybe_update_ctime(Name) ->
     case file:read_file_info(Name, [raw]) of
